@@ -14,19 +14,18 @@ from data.evaluate import load_dev_labels, get_metrics
 import pickle as pkl
 import emoji
 import nltk
-from ekphrasis.classes.preprocessor import TextPreProcessor
-from ekphrasis.classes.tokenizer import SocialTokenizer
-from ekphrasis.dicts.emoticons import emoticons
 import sys
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from copy import deepcopy
 import argparse
 import random
 from utils.focalloss import FocalLoss
+from utils.tweet_processor import processing_pipeline
 import json
 from torchmoji.sentence_tokenizer import SentenceTokenizer
 from torchmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
 from emoji import UNICODE_EMOJI
+
 parser = argparse.ArgumentParser(description='Options')
 parser.add_argument('-folds', default=9, type=int,
                     help="num of folds")
@@ -88,11 +87,7 @@ torch.cuda.manual_seed_all(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 random.seed(RANDOM_SEED)
 
-# FAST_EMB_PATH = '/home/chenyang/data/feature/wiki-news-300d-1M.vec'
-# FAST_EMB_PATH = '/remote/eureka1/chuang8/wiki-news-300d-1M.vec'
-# GLOVE_EMB_PATH = '/home/chenyang/PycharmProjects/InsincereQuestions/' \
-#                  'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
-GLOVE_EMB_PATH = '/remote/eureka1/chuang8/glove.840B.300d.txt'
+opt.GLOVE_EMB_PATH = opt.glovepath
 
 options_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
 weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
@@ -109,6 +104,7 @@ with open(VOCAB_PATH, 'r') as f:
 emoji_st = SentenceTokenizer(vocabulary, EMOJ_SENT_PAD_LEN)
 
 # '/remote/eureka1/chuang8/wiki-news-300d-1M.vec'
+
 
 def load_data_context(data_path='data/train.txt', is_train=True):
     # data_path = 'data/train.txt'
@@ -340,81 +336,6 @@ class TestDataSet(Dataset):
                torch.LongTensor(self.emoji_a[idx])
 
 
-def to_categorical(vec):
-    to_ret = np.zeros((vec.shape[0], NUM_EMO))
-    for idx, val in enumerate(vec):
-        to_ret[idx, val] = 1
-    return to_ret
-
-
-def get_metrics(ground, predictions):
-    """Given predicted labels and the respective ground truth labels, display some metrics
-    Input: shape [# of samples, NUM_CLASSES]
-        predictions : Model output. Every row has 4 decimal values, with the highest belonging to the predicted class
-        ground : Ground truth labels, converted to one-hot encodings. A sample belonging to Happy class will be [0, 1, 0, 0]
-    Output:
-        accuracy : Average accuracy
-        microPrecision : Precision calculated on a micro level. Ref -
-        https://datascience.stackexchange.com/questions/15989/micro-average-vs-macro-average-performance-in-a-multiclass-classification-settin/16001
-        microRecall : Recall calculated on a micro level
-        microF1 : Harmonic mean of microPrecision and microRecall. Higher value implies better classification
-    """
-    # [0.1, 0.3 , 0.2, 0.1] -> [0, 1, 0, 0]
-    discretePredictions = to_categorical(predictions)
-    ground = to_categorical(ground)
-    truePositives = np.sum(discretePredictions * ground, axis=0)
-    falsePositives = np.sum(np.clip(discretePredictions - ground, 0, 1), axis=0)
-    falseNegatives = np.sum(np.clip(ground - discretePredictions, 0, 1), axis=0)
-
-    print("True Positives per class : ", truePositives)
-    print("False Positives per class : ", falsePositives)
-    print("False Negatives per class : ", falseNegatives)
-
-    #  Macro level calculation
-    macroPrecision = 0
-    macroRecall = 0
-    # We ignore the "Others" class during the calculation of Precision, Recall and F1
-    f1_list = []
-    for c in range(NUM_EMO-1):
-        precision = truePositives[c] / (truePositives[c] + falsePositives[c])
-        macroPrecision += precision
-        recall = truePositives[c] / (truePositives[c] + falseNegatives[c])
-        macroRecall += recall
-        f1 = (2 * recall * precision) / (precision + recall) if (precision + recall) > 0 else 0
-        f1_list.append(f1)
-        print("Class %s : Precision : %.3f, Recall : %.3f, F1 : %.3f" % (EMOS[c], precision, recall, f1))
-
-    print('Direct average of macro F1s are :------> ', (f1_list[0] + f1_list[1] + f1_list[2]) / 3)
-    macroPrecision /= 3
-    macroRecall /= 3
-    macroF1 = (2 * macroRecall * macroPrecision) / (macroPrecision + macroRecall) \
-        if (macroPrecision + macroRecall) > 0 else 0
-    print("Ignoring the Others class, Macro Precision : %.4f, Macro Recall : %.4f, Macro F1 : %.4f" % (
-    macroPrecision, macroRecall, macroF1))
-
-    # Micro level calculation
-    truePositives = truePositives[1:].sum()
-    falsePositives = falsePositives[1:].sum()
-    falseNegatives = falseNegatives[1:].sum()
-
-    print("Ignoring the Others class, Micro TP : %d, FP : %d, FN : %d"
-          % (truePositives, falsePositives, falseNegatives))
-
-    microPrecision = truePositives / (truePositives + falsePositives)
-    microRecall = truePositives / (truePositives + falseNegatives)
-
-    microF1 = (2 * microRecall * microPrecision) / (microPrecision + microRecall)\
-        if (microPrecision + microRecall) > 0 else 0
-
-    # predictions = predictions.argmax(axis=1)
-    ground = ground.argmax(axis=1)
-    accuracy = np.mean(predictions == ground)
-
-    print("Accuracy : %.4f, Micro Precision : %.4f, Micro Recall : %.4f, Micro F1 : %.4f" % (
-    accuracy, microPrecision, microRecall, microF1))
-    return accuracy, microPrecision, microRecall, microF1
-
-
 def build_embedding(id2word, fname, num_of_vocab):
     """
     :param id2word, fname:
@@ -569,36 +490,9 @@ def main():
             scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=opt.gamma)
 
             if opt.w == 1:
-                weight_list = [0.24, 0.24, 0.24, 1.76]
-                weight_list_binary = [0.24, 1.76]
-            elif opt.w == 2:
                 weight_list = [0.3, 0.3, 0.3, 1.7]
                 weight_list_binary = [0.3, 1.7]
-            elif opt.w == 3:
-                weight_list = [0.27, 0.27, 0.27, 1.73]
-                weight_list_binary = [0.27, 1.73]
-            elif opt.w == 4:
-                weight_list = [0.2, 0.2, 0.2, 1.8]
-                weight_list_binary = [0.2, 1.8]
-            elif opt.w == 5:
-                weight_list = [0.35, 0.35, 0.35, 1.65]
-                weight_list_binary = [0.35, 1.65]
-            elif opt.w == 6:
-                weight_list = [0.4, 0.4, 0.4, 1.6]
-                weight_list_binary = [0.4, 1.6]
-            elif opt.w == 7:
-                weight_list =[0.5, 0.5, 0.5, 1.5]
-                weight_list_binary = [0.5, 1.5]
-            elif opt.w == 8:
-                weight_list = [1, 1, 1, 1]
-                weight_list_binary = [1, 1]
-            elif opt.w == 9:
-                weight_list = [0.16, 0.16, 0.16, 1.84]
-                weight_list_binary = [0.16, 1.84]
-            elif opt.w == 10:
-                weight_list = [0.3554089088, 0.2738830367, 0.2760388065, 1.715012042]
-                weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
-            elif opt.w == 11:
+            elif opt.w == 2:
                 weight_list = [0.3198680179, 0.246494733, 0.2484349259, 1.74527696]
                 weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
             weight_list = [x**FLAT for x in weight_list]
@@ -734,7 +628,7 @@ def main():
                         pred_list_test.append(pred.data.cpu().numpy())
                     del elmo_a, a, pred
                 pred_list_test = np.argmax(np.concatenate(pred_list_test, axis=0), axis=1)
-                get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
+                # get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
 
                 # Testing
                 print('Gold test testing...')
@@ -749,7 +643,7 @@ def main():
                         final_pred_list_test.append(pred.data.cpu().numpy())
                     del elmo_a, a, pred
                 final_pred_list_test = np.argmax(np.concatenate(final_pred_list_test, axis=0), axis=1)
-                get_metrics(load_dev_labels('data/test.txt'), final_pred_list_test)
+                # get_metrics(load_dev_labels('data/test.txt'), final_pred_list_test)
 
             if is_diverged:
                 print("Reinitialize model ...")

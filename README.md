@@ -1,8 +1,5 @@
 # ANA at SemEval-2019 Task 3 
 
-*NOTE: CODE CLEANING IS STILL IN PROGRESS*
-
-
 This repo contains the code for our paper,
  
  *ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT*
