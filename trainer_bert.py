@@ -8,10 +8,10 @@ from utils.early_stopping import EarlyStopping
 import numpy as np
 import copy
 from tqdm import tqdm
-from tasks.Task3.model_bert_mtl import BERT_classifer, NUM_EMO
+from model.bert import BERT_classifer, NUM_EMO
 from pytorch_pretrained_bert import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-from tasks.Task3.data.evaluate import load_dev_labels
+from data.evaluate import load_dev_labels
 import emoji
 import nltk
 from ekphrasis.classes.preprocessor import TextPreProcessor
@@ -27,30 +27,32 @@ from emoji import UNICODE_EMOJI
 parser = argparse.ArgumentParser(description='Options')
 parser.add_argument('-folds', default=9, type=int,
                     help="num of folds")
-parser.add_argument('-lr', default=1e-4, type=float,
-                    help="post name")
-parser.add_argument('-tokentype', default='True', type=str,
-                    help="post name")
-parser.add_argument('-loss', default='ce', type=str,
-                    help="post name")
-parser.add_argument('-postname', default='', type=str,
-                    help="post name")
-parser.add_argument('-lbd1', default=0.4, type=float,
-                    help="lambda1 is for MTL")
-parser.add_argument('-lbd2', default=0.2, type=float,
-                    help="lambda2 is for optimizing only the emotional labels")
-parser.add_argument('-half', default='False', type=str,
+parser.add_argument('-bs', default=128, type=int,
                     help="batch size")
+parser.add_argument('-postname', default='', type=str,
+                    help="name that will be added at the end of generated file")
+parser.add_argument('-gamma', default=0.2, type=float,
+                    help="the decay of the ")
+parser.add_argument('-lr', default=5e-4, type=float,
+                    help="learning rate")
+parser.add_argument('-lbd1', default=0, type=float,
+                    help="lambda1 is for MTL")
+parser.add_argument('-lbd2', default=0, type=float,
+                    help="lambda2 is for optimizing only the emotional labels")
+parser.add_argument('-patience', default=1, type=int,
+                    help="patience of early stopping")
 parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
-parser.add_argument('-w', default=10, type=int,
+parser.add_argument('-focal', default=2, type=int,
                     help="patience ")
-parser.add_argument('-bs', default=32, type=int,
-                    help="batch size")
-parser.add_argument('-padlen', default=66, type=int,
-                    help="batch size")
-parser.add_argument('-size', default='large', type=str,
-                    help=",model size")
+parser.add_argument('-w', default=11, type=int,
+                    help="patience ")
+parser.add_argument('-loss', default='ce', type=str,
+                    help="ce or focal ")
+parser.add_argument('-dim', default=1500, type=int,
+                    help="post name")
+parser.add_argument('-glovepath', type=int,
+                    help="please specify the path to a GloVe 300d emb file")
 opt = parser.parse_args()
 
 if opt.half == 'True':
@@ -93,68 +95,6 @@ else:
     raise ValueError('Token type is not recognised')
 
 tokenizer = BertTokenizer.from_pretrained(BERT_MODEL)
-
-text_processor = TextPreProcessor(
-    # terms that will be normalized
-    normalize=['url', 'email', 'percent', 'money', 'phone', 'user',
-               'time', 'url', 'date', 'number'],
-    # terms that will be annotated
-    annotate={"hashtag", "allcaps", "elongated", "repeated",
-              'emphasis', 'censored'},
-    fix_html=True,  # fix HTML tokens
-
-    # corpus from which the word statistics are going to be used
-    # for word segmentation
-    segmenter="twitter",
-
-    # corpus from which the word statistics are going to be used
-    # for spell correction
-    corrector="twitter",
-
-    unpack_hashtags=True,  # perform word segmentation on hashtags
-    unpack_contractions=True,  # Unpack contractions (can't -> can not)
-    spell_correct_elong=True,  # spell correction for elongated words
-
-    # select a tokenizer. You can use SocialTokenizer, or pass your own
-    # the tokenizer, should take as input a string and return a list of tokens
-    tokenizer=SocialTokenizer(lowercase=True).tokenize,
-
-    # list of dictionaries, for replacing tokens extracted from the text,
-    # with other expressions. You can pass more than one dictionaries.
-    dicts=[emoticons]
-)
-
-
-def remove_dup_emoji(sent):
-    ret = []
-    for word in sent.split():
-        emo_found = [char for char in word if char in UNICODE_EMOJI]
-        if len(emo_found) > 1:
-            word = emo_found[0]
-        ret.append(word)
-    return ' '.join(ret)
-
-
-def remove_underscope_for_emoji(text):
-    tokens = text.split()
-    ret_list = []
-    for token in tokens:
-        if len(token) > 3 and '_' in token:
-            token = token.replace('_', ' ')
-
-        if token[0] == '<' and token[-1] == '>':
-            token = token[1:-1]
-        ret_list.append(token)
-    return ' '.join(ret_list)
-
-
-def processing_pipelie(text):
-    text = text.lower().strip()
-    # text = remove_dup_emoji(text)
-    text = emoji.demojize(text, delimiters=(' ', ' '))
-    text = ' '.join(text_processor.pre_process_doc(text))
-    text = remove_underscope_for_emoji(text)
-    return text
 
 
 def load_data_context(data_path='data/train.txt', is_train=True):

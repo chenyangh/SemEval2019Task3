@@ -12,10 +12,6 @@ from model.hrlce import HierarchicalPredictor, NUM_EMO
 from sklearn.metrics import classification_report
 from data.evaluate import load_dev_labels, get_metrics
 import pickle as pkl
-import emoji
-from ekphrasis.classes.preprocessor import TextPreProcessor
-from ekphrasis.classes.tokenizer import SocialTokenizer
-from ekphrasis.dicts.emoticons import emoticons
 import sys
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from copy import deepcopy
@@ -24,7 +20,6 @@ import random
 from utils.focalloss import FocalLoss
 from torchmoji.sentence_tokenizer import SentenceTokenizer
 from torchmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
-from emoji import UNICODE_EMOJI
 from utils.tweet_processor import processing_pipeline
 
 parser = argparse.ArgumentParser(description='Options')
@@ -33,11 +28,11 @@ parser.add_argument('-folds', default=9, type=int,
 parser.add_argument('-bs', default=128, type=int,
                     help="batch size")
 parser.add_argument('-postname', default='', type=str,
-                    help="post name")
+                    help="name that will be added at the end of generated file")
 parser.add_argument('-gamma', default=0.2, type=float,
-                    help="post name")
+                    help="the decay of the ")
 parser.add_argument('-lr', default=5e-4, type=float,
-                    help="post name")
+                    help="learning rate")
 parser.add_argument('-lbd1', default=0, type=float,
                     help="lambda1 is for MTL")
 parser.add_argument('-lbd2', default=0, type=float,

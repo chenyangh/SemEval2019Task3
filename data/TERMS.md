@@ -1,0 +1,3 @@
+License/Terms that come with the data files. Please do follow it.
+ 
+You agree to download and use all data shared by Microsoft only for the purpose of participating in SemEval 2019 Task 3 "EmoContext". On successful submission of your system to the EmoContext task, you can use this data in the future for research purposes only. If you do not submit a system to the challenge, you are considered to have withdrawn from the task.  Accordingly, you are required to delete and purge all copies of data and you cannot use the data for any purpose whatsoever. You also agree to provide the attribution "Data provided by Microsoft" when you publish your findings.
