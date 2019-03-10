@@ -11,18 +11,12 @@ from tqdm import tqdm
 from model.bert import BERT_classifer, NUM_EMO
 from pytorch_pretrained_bert import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-from data.evaluate import load_dev_labels
-import emoji
-import nltk
-from ekphrasis.classes.preprocessor import TextPreProcessor
-from ekphrasis.classes.tokenizer import SocialTokenizer
-from ekphrasis.dicts.emoticons import emoticons
+from data.evaluate import load_dev_labels, get_metrics
 import sys
 import argparse
 import random
 from utils.focalloss import FocalLoss
 from copy import deepcopy
-from emoji import UNICODE_EMOJI
 
 parser = argparse.ArgumentParser(description='Options')
 parser.add_argument('-folds', default=9, type=int,
@@ -45,14 +39,12 @@ parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
 parser.add_argument('-focal', default=2, type=int,
                     help="patience ")
-parser.add_argument('-w', default=11, type=int,
+parser.add_argument('-w', default=2, type=int,
                     help="patience ")
 parser.add_argument('-loss', default='ce', type=str,
                     help="ce or focal ")
-parser.add_argument('-dim', default=1500, type=int,
+parser.add_argument('-tokentype', default='True', type=str,
                     help="post name")
-parser.add_argument('-glovepath', type=int,
-                    help="please specify the path to a GloVe 300d emb file")
 opt = parser.parse_args()
 
 if opt.half == 'True':
@@ -249,7 +241,7 @@ class TestDataSet(Dataset):
             b = tokenizer.tokenize(b)
             c = tokenizer.tokenize(c)
 
-            a = ['[CLS]'] + a + ['[SEP]']
+            a = ['[CLS]'] + a
             b = b + ['[SEP]']
             c = c + ['[SEP]']
 
@@ -374,36 +366,9 @@ def main():
                                  t_total=num_train_steps)
 
             if opt.w == 1:
-                weight_list = [0.24, 0.24, 0.24, 1.76]
-                weight_list_binary = [0.24, 1.76]
-            elif opt.w == 2:
                 weight_list = [0.3, 0.3, 0.3, 1.7]
-                weight_list_binary = [0.3, 1.7]
-            elif opt.w == 3:
-                weight_list = [0.27, 0.27, 0.27, 1.73]
-                weight_list_binary = [0.27, 1.73]
-            elif opt.w == 4:
-                weight_list = [0.2, 0.2, 0.2, 1.8]
-                weight_list_binary = [0.2, 1.8]
-            elif opt.w == 5:
-                weight_list = [0.35, 0.35, 0.35, 1.65]
-                weight_list_binary = [0.35, 1.65]
-            elif opt.w == 6:
-                weight_list = [0.4, 0.4, 0.4, 1.6]
-                weight_list_binary = [0.4, 1.6]
-            elif opt.w == 7:
-                weight_list =[0.5, 0.5, 0.5, 1.5]
-                weight_list_binary = [0.5, 1.5]
-            elif opt.w == 8:
-                weight_list = [1, 1, 1, 1]
-                weight_list_binary = [1, 1]
-            elif opt.w == 9:
-                weight_list = [0.16, 0.16, 0.16, 1.84]
-                weight_list_binary = [0.16, 1.84]
-            elif opt.w == 10:
-                weight_list = [0.3554089088, 0.2738830367, 0.2760388065, 1.715012042]
                 weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
-            elif opt.w == 11:
+            elif opt.w == 2:
                 weight_list = [0.3198680179, 0.246494733, 0.2484349259, 1.74527696]
                 weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
 
@@ -540,7 +505,7 @@ def main():
                         pred_list_test.append(pred.data.cpu().numpy())
 
                 pred_list_test = np.argmax(np.concatenate(pred_list_test, axis=0), axis=1)
-                get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
+                # get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
 
                 print('Gold Test ...')
                 final_pred_list_test = []
@@ -554,7 +519,7 @@ def main():
                         final_pred_list_test.append(pred.data.cpu().numpy())
 
                 final_pred_list_test = np.argmax(np.concatenate(final_pred_list_test, axis=0), axis=1)
-                get_metrics(load_dev_labels('data/test.txt'), final_pred_list_test)
+                # get_metrics(load_dev_labels('data/test.txt'), final_pred_list_test)
 
             if is_diverged:
                 print("Reinitialize model ...")
@@ -611,7 +576,7 @@ def main():
     # WRITE TO FILE
     test_file = 'data/testwithoutlabels.txt'
     f_in = open(test_file, 'r')
-    f_out = open('test_elmo_mtl' + opt.postname + '.txt', 'w')
+    f_out = open('test_bert_mtl' + opt.postname + '.txt', 'w')
 
     data_lines = f_in.readlines()
     for idx, text in enumerate(data_lines):
@@ -622,7 +587,6 @@ def main():
 
     f_in.close()
     f_out.close()
-
     print('Final testing')
 
 main()

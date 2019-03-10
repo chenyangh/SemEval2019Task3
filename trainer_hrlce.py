@@ -21,6 +21,7 @@ from utils.focalloss import FocalLoss
 from torchmoji.sentence_tokenizer import SentenceTokenizer
 from torchmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
 from utils.tweet_processor import processing_pipeline
+import json
 
 parser = argparse.ArgumentParser(description='Options')
 parser.add_argument('-folds', default=9, type=int,
@@ -43,7 +44,7 @@ parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
 parser.add_argument('-focal', default=2, type=int,
                     help="patience ")
-parser.add_argument('-w', default=11, type=int,
+parser.add_argument('-w', default=2, type=int,
                     help="patience ")
 parser.add_argument('-loss', default='ce', type=str,
                     help="ce or focal ")
@@ -91,6 +92,11 @@ weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512
 
 elmo = Elmo(options_file, weight_file, 2, dropout=0).cuda()
 elmo.eval()
+
+print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
+with open(VOCAB_PATH, 'r') as f:
+    vocabulary = json.load(f)
+emoji_st = SentenceTokenizer(vocabulary, EMOJ_SENT_PAD_LEN)
 
 
 def load_data_context(data_path='data/train.txt', is_train=True):
@@ -521,7 +527,7 @@ def main():
                 weight_list = [0.3, 0.3, 0.3, 1.7]
                 weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
             elif opt.w == 2:
-                weight_list = [0.3554089088, 0.2738830367, 0.2760388065, 1.715012042]
+                weight_list = [0.3198680179, 0.246494733, 0.2484349259, 1.74527696]
                 weight_list_binary = [2 - weight_list[-1], weight_list[-1]]
             else:
                 raise ValueError
@@ -671,7 +677,7 @@ def main():
                         pred_list_test.append(pred.data.cpu().numpy())
                     del elmo_a, elmo_b, elmo_c, a, b, c, pred
                 pred_list_test = np.argmax(np.concatenate(pred_list_test, axis=0), axis=1)
-                get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
+                # get_metrics(load_dev_labels('data/dev.txt'), pred_list_test)
 
                 # Testing
                 print('Gold test testing...')
@@ -691,7 +697,6 @@ def main():
                     del elmo_a, elmo_b, elmo_c, a, b, c, pred
                 final_pred_list_test = np.argmax(np.concatenate(final_pred_list_test, axis=0), axis=1)
                 # get_metrics(load_dev_labels('data/test.txt'), final_pred_list_test)
-
 
             if is_diverged:
                 print("Reinitialize model ...")
