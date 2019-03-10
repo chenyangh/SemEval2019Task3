@@ -10,11 +10,6 @@ import torch
 from torch.autograd import Variable
 
 
-
-
-NUM_EMO = 4
-
-
 class BERT_classifer(PreTrainedBertModel):
     """
     A Hierarchical LSTM with for 3 turns dialogue
@@ -31,7 +26,7 @@ class BERT_classifer(PreTrainedBertModel):
         self.out2binary = None
         self.out2emo = None
 
-    def add_output_layer(self, BERT_MODEL):
+    def add_output_layer(self, BERT_MODEL, NUM_EMO):
         if BERT_MODEL == 'bert-large-uncased':
             self.bert_out_dim = 1024
         elif BERT_MODEL == 'bert-base-uncased':

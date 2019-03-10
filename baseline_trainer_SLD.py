@@ -8,9 +8,9 @@ from utils.early_stopping import EarlyStopping
 import numpy as np
 import copy
 from tqdm import tqdm
-from tasks.Task3.baseline_model_SLD import HierarchicalPredictor, NUM_EMO
+from model.sld import HierarchicalPredictor, NUM_EMO
 from sklearn.metrics import classification_report
-from tasks.Task3.data.evaluate import load_dev_labels
+from data.evaluate import load_dev_labels, get_metrics
 import pickle as pkl
 import emoji
 import nltk
@@ -110,72 +110,6 @@ emoji_st = SentenceTokenizer(vocabulary, EMOJ_SENT_PAD_LEN)
 
 # '/remote/eureka1/chuang8/wiki-news-300d-1M.vec'
 
-# NUM_EMO = 7 defined in sa_lstm. # TODO: need to refactor
-
-text_processor = TextPreProcessor(
-    # terms that will be normalized
-    normalize=['url', 'email', 'percent', 'money', 'phone', 'user',
-               'time', 'url', 'date', 'number'],
-    # terms that will be annotated
-    annotate={"hashtag", "allcaps", "elongated", #  "repeated",
-              'emphasis', 'censored'},
-    fix_html=True,  # fix HTML tokens
-
-    # corpus from which the word statistics are going to be used
-    # for word segmentation
-    segmenter="twitter",
-
-    # corpus from which the word statistics are going to be used
-    # for spell correction
-    corrector="twitter",
-
-    unpack_hashtags=True,  # perform word segmentation on hashtags
-    unpack_contractions=True,  # Unpack contractions (can't -> can not)
-    spell_correct_elong=True,  # spell correction for elongated words
-
-    # select a tokenizer. You can use SocialTokenizer, or pass your own
-    # the tokenizer, should take as input a string and return a list of tokens
-    tokenizer=SocialTokenizer(lowercase=True).tokenize,
-
-    # list of dictionaries, for replacing tokens extracted from the text,
-    # with other expressions. You can pass more than one dictionaries.
-    dicts=[emoticons]
-)
-
-
-def remove_dup_emoji(sent):
-    ret = []
-    for word in sent.split():
-        emo_found = [char for char in word if char in UNICODE_EMOJI]
-        if len(emo_found) > 1:
-            word = emo_found[0]
-        ret.append(word)
-    return ' '.join(ret)
-
-
-def remove_underscope_for_emoji(text):
-    tokens = text.split()
-    ret_list = []
-    for token in tokens:
-        if len(token) > 3 and '_' in token:
-            token = token.replace('_', ' ')
-
-        if token[0] == '<' and token[-1] == '>':
-            token = token[1:-1]
-
-        ret_list.append(token)
-    return ' '.join(ret_list)
-
-
-def processing_pipelie(text):
-    text = text.lower().strip()
-    # text = remove_dup_emoji(text)
-    text = ' '.join(text_processor.pre_process_doc(text))
-    text = emoji.demojize(text, delimiters=(' ', ' '))
-    text = remove_underscope_for_emoji(text)
-    return text
-
-
 def load_data_context(data_path='data/train.txt', is_train=True):
     # data_path = 'data/train.txt'
 
@@ -199,9 +133,9 @@ def load_data_context(data_path='data/train.txt', is_train=True):
         raw_b = convers[1]
         raw_c = convers[2]
 
-        a = processing_pipelie(raw_a)
-        b = processing_pipelie(raw_b)
-        c = processing_pipelie(raw_c)
+        a = processing_pipeline(raw_a)
+        b = processing_pipeline(raw_b)
+        c = processing_pipeline(raw_c)
 
         data_list.append(a + ' ' + b + ' ' + c)
         if is_train:

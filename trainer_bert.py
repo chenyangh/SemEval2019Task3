@@ -8,7 +8,7 @@ from utils.early_stopping import EarlyStopping
 import numpy as np
 import copy
 from tqdm import tqdm
-from model.bert import BERT_classifer, NUM_EMO
+from model.bert import BERT_classifer
 from pytorch_pretrained_bert import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
 from data.evaluate import load_dev_labels, get_metrics
@@ -16,6 +16,7 @@ import sys
 import argparse
 import random
 from utils.focalloss import FocalLoss
+from utils.tweet_processor import processing_pipeline
 from copy import deepcopy
 
 parser = argparse.ArgumentParser(description='Options')
@@ -62,6 +63,7 @@ else:
     raise ValueError
 
 NUM_OF_FOLD = opt.folds
+NUM_EMO = 4
 learning_rate = opt.lr
 MAX_EPOCH = 300
 CONV_PAD_LEN = 3
@@ -111,9 +113,9 @@ def load_data_context(data_path='data/train.txt', is_train=True):
         b = convers[1]
         c = convers[2]
 
-        a = processing_pipelie(a)
-        b = processing_pipelie(b)
-        c = processing_pipelie(c)
+        a = processing_pipeline(a)
+        b = processing_pipeline(b)
+        c = processing_pipeline(c)
 
         a_len = len(a.split())
         b_len = len(b.split())
@@ -344,7 +346,7 @@ def main():
         while True:
             is_diverged = False
             model = BERT_classifer.from_pretrained(BERT_MODEL)
-            model.add_output_layer(BERT_MODEL)
+            model.add_output_layer(BERT_MODEL, NUM_EMO)
             model = nn.DataParallel(model)
             if HALF_PRECISION:
                 # model = network_to_half(model)
