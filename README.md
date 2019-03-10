@@ -13,7 +13,9 @@ An overview of the proposed *HRLCE* Model:
 
 HRLCE is a single model that can achieve a score of 0.7666 on the final test set while only using the training dataset. 
 
-We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 which ranked at 5th on the leaderboard of SemEval 2019 Task3.
+We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 which ranked at 5th on the leaderboard of SemEval 2019 Task3. 
+
+You can find the leaderboard from [CodaLab](https://competitions.codalab.org/competitions/19790#learn_the_details-data-set-format).
  
 ## Instructions
 PyTorch1.0 with Python 3.6 serve as the backbones of this project.
@@ -41,7 +43,6 @@ Compared to HRLCE, we notice that BERT performs better on *Angry* but worse on *
 Another note, in order to get your submissions measured the same way as that from CodaLab, you will need to look at the harmonic mean of the three macro F1 scores of the three emotion categories. 
 It is slightly different than using the micro F scores of the three emotion categories directly. 
 
-You can find the leaderboard from [CodaLab](https://competitions.codalab.org/competitions/19790#learn_the_details-data-set-format).
 
 ## Acknowledgement
 This code is relying on the work of the following projects:
