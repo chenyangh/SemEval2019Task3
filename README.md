@@ -19,3 +19,15 @@ The results are shown in the following table:
 | *BERT*   |   Dev  <br/>  Test  |  0.7138  <br/>  0.7151  |  0.7736 <br/>  0.7654 |  0.8106  <br/> 0.8157  |  0.7638  <br/> 0.7631    |
 
 *CODE CLEANING IS STILL IN PROGRESS*
+
+# Acknowledgement
+This code is relying on the work of the following projects, 
+please do not forget to get them credits if you find the work of ours is helpful:
+
+[AllenNlp](https://github.com/allenai/allennlp)
+
+[torchMoji](https://github.com/huggingface/torchMoji)
+
+[pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT)
+
+[ekphrasis](https://github.com/cbaziotis/ekphrasis)
