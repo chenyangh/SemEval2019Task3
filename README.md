@@ -18,7 +18,7 @@ HRLCE is a single model that can achieve a score of 0.7666 on the final test set
 We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 on the leaderboard of SemEval 2019 Task3.
  
 ## Instructions
-PyTorch1.0 with Python 3.6 is the backbone of this project.
+PyTorch1.0 with Python 3.6 serve as the backbones of this project.
 
 The code is using one GPU by default, you have to modify the code to make it running on CPU or multiple GPUs.
 
