@@ -1,6 +1,7 @@
-# ANA at SemEval-2019 Task 3
+# ANA at SemEval-2019 Task 3 
 
 *NOTE: CODE CLEANING IS STILL IN PROGRESS*
+
 
 This repo contains the code for our paper,
  
@@ -11,6 +12,11 @@ An overview of the proposed *HRLCE* Model:
 
 ![HRLCE](img/hred.jpg )
 
+
+HRLCE is a single model that can achieve a score of 0.7666 on the final test set while only using the training dataset. 
+
+We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 on the leaderboard of SemEval 2019 Task3.
+ 
 ## Instructions
 
 
@@ -37,4 +43,4 @@ This code is relying on the work of the following projects:
 
 * [ekphrasis](https://github.com/cbaziotis/ekphrasis)
 
-Much thanks to my supervisor [Osmar R. Zaïane](http://webdocs.cs.ualberta.ca/~zaiane/) for supporting me working on this competition. 
+Many thanks to my supervisor [Osmar R. Zaïane](http://webdocs.cs.ualberta.ca/~zaiane/) for supporting me working on this competition. 
