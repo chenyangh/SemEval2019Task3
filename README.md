@@ -1,14 +1,15 @@
-# SemEval2019Task3
+# ANA at SemEval-2019 Task 3
 This repo contains the code for our paper,
  
  *ANA at SemEval-2019 Task 3: Contextual Emotion detection inConversations through hierarchical LSTMs and BERT*
 
 
-An overview of the proposed *HRLCE* Model
-
-The results are shown in the following table:
+An overview of the proposed *HRLCE* Model:
 
 ![HRLCE](img/hred.jpg )
+
+
+The results are shown in the following table:
 
 |        |    F1    |   Happy  |   Angry  |    Sad   | Harm. Mean  |
 | ------ | :------: | :------: | :------: | :------: | :---------: |
