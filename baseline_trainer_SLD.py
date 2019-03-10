@@ -24,7 +24,6 @@ from utils.tweet_processor import processing_pipeline
 import json
 from torchmoji.sentence_tokenizer import SentenceTokenizer
 from torchmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
-from emoji import UNICODE_EMOJI
 
 parser = argparse.ArgumentParser(description='Options')
 parser.add_argument('-folds', default=9, type=int,
@@ -32,11 +31,11 @@ parser.add_argument('-folds', default=9, type=int,
 parser.add_argument('-bs', default=128, type=int,
                     help="batch size")
 parser.add_argument('-postname', default='', type=str,
-                    help="post name")
+                    help="a string which will be added to the end of the generated file")
 parser.add_argument('-gamma', default=0.2, type=float,
-                    help="post name")
+                    help="learning rate decay")
 parser.add_argument('-lr', default=5e-4, type=float,
-                    help="post name")
+                    help="learning rate")
 parser.add_argument('-lbd1', default=0, type=float,
                     help="lambda1 is for MTL")
 parser.add_argument('-lbd2', default=0, type=float,
@@ -47,7 +46,7 @@ parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
 parser.add_argument('-focal', default=2, type=int,
                     help="patience ")
-parser.add_argument('-w', default=10, type=int,
+parser.add_argument('-w', default=2, type=int,
                     help="patience ")
 parser.add_argument('-loss', default='ce', type=str,
                     help="ce or focal ")
