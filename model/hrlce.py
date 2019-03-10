@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch.autograd import Variable
-from model.self_attention import SelfAttentive, AttentionOneParaPerChan
-from model.torch_moji import TorchMoji
+from module.self_attention import SelfAttentive, AttentionOneParaPerChan
+from module.torch_moji import TorchMoji
 
 import pickle as pkl
 import os

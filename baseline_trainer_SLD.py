@@ -45,13 +45,15 @@ parser.add_argument('-patience', default=1, type=int,
 parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
 parser.add_argument('-focal', default=2, type=int,
-                    help="patience ")
+                    help="gamma value for focal loss, default 2")
 parser.add_argument('-w', default=2, type=int,
                     help="patience ")
 parser.add_argument('-loss', default='ce', type=str,
                     help="ce or focal ")
 parser.add_argument('-dim', default=1500, type=int,
                     help="post name")
+parser.add_argument('-glovepath', type=int,
+                    help="please specify the path to a GloVe 300d emb file")
 opt = parser.parse_args()
 
 
@@ -86,7 +88,7 @@ torch.cuda.manual_seed_all(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 random.seed(RANDOM_SEED)
 
-opt.GLOVE_EMB_PATH = opt.glovepath
+GLOVE_EMB_PATH = opt.glovepath
 
 options_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
 weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"

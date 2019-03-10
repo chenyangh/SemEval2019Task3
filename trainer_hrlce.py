@@ -43,7 +43,7 @@ parser.add_argument('-patience', default=1, type=int,
 parser.add_argument('-flat', default=1, type=float,
                     help="flatten para")
 parser.add_argument('-focal', default=2, type=int,
-                    help="patience ")
+                    help="gamma value for focal loss, default 2 ")
 parser.add_argument('-w', default=2, type=int,
                     help="patience ")
 parser.add_argument('-loss', default='ce', type=str,
