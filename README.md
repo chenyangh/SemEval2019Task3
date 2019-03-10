@@ -6,6 +6,8 @@ This repo contains the code for our paper,
 
 An overview of the proposed *HRLCE* Model
 
+The results are shown in the following table:
+
 ![HRLCE](img/hred.jpg )
 
 |        |    F1    |   Happy  |   Angry  |    Sad   | Harm. Mean  |
