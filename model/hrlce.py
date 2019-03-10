@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch.autograd import Variable
-from models.self_attention import SelfAttentive, AttentionOneParaPerChan
-from models.torch_moji import TorchMoji
+from model.self_attention import SelfAttentive, AttentionOneParaPerChan
+from model.torch_moji import TorchMoji
 
 import pickle as pkl
 import os
@@ -32,6 +32,8 @@ class HierarchicalPredictor(nn.Module):
                                         embed_dropout_rate=0.2,
                                         final_dropout_rate=0.2)
         self.deepmoji_dim = 2304
+        self.deepmoji_out = 300
+        self.deepmoji2linear = nn.Linear(self.deepmoji_dim, self.deepmoji_out)
 
         self.elmo_dim = 1024
 
@@ -45,14 +47,33 @@ class HierarchicalPredictor(nn.Module):
         self.a_self_attention = self.cent_lstm_att_fn(self.sent_lstm_directions*hidden_dim)
         # self.a_layer_norm = BertLayerNorm(hidden_dim*self.sent_lstm_directions)
 
+        self.b_lstm = nn.LSTM(embedding_dim + self.elmo_dim, hidden_dim, num_layers=self.num_layers, batch_first=True,
+                            bidirectional=self.bidirectional, dropout=0.2)
+        self.b_self_attention = self.cent_lstm_att_fn(self.sent_lstm_directions*hidden_dim)
+        # self.b_layer_norm = BertLayerNorm(hidden_dim*self.sent_lstm_directions)
+
+        self.ctx_bidirectional = True
+        self.ctx_lstm_dim = 800
+        self.ctx_lstm_directions = 2 if self.ctx_bidirectional else 1
+
+        if not self.add_linear:
+            self.deepmoji_out = self.deepmoji_dim
+
+        self.context_lstm = nn.LSTM(self.SENT_LSTM_DIM * self.sent_lstm_directions + self.deepmoji_out, self.ctx_lstm_dim,
+                                    num_layers=2, batch_first=True, dropout=0.2, bidirectional=self.ctx_bidirectional)
+        self.ctx_self_attention = self.ctx_lstm__att_fn(self.ctx_lstm_directions * self.ctx_lstm_dim)
+        # self.ctx_layer_norm = BertLayerNorm(self.ctx_lstm_dim*self.ctx_lstm_directions)
+        # self.ctx_pooler = BertPooler(self.ctx_lstm_dim*self.ctx_lstm_directions)
+
         self.vocab_size = vocab_size
         self.embedding_dim = embedding_dim
         self.embeddings = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
 
+        self.context_to_emo = nn.Linear(self.ctx_lstm_dim, NUM_EMO)
         self.drop_out = nn.Dropout(0.2)
-        self.out2label = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, NUM_EMO)
-        self.out2binary = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, 2)
-        self.out2emo = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, NUM_EMO-1)
+        self.out2label = nn.Linear(self.ctx_lstm_dim * self.ctx_lstm_directions, NUM_EMO)
+        self.out2binary = nn.Linear(self.ctx_lstm_dim * self.ctx_lstm_directions, 2)
+        self.out2emo = nn.Linear(self.ctx_lstm_dim * self.ctx_lstm_directions, NUM_EMO-1)
 
     def init_hidden(self, x):
         batch_size = x.size(0)
@@ -92,7 +113,7 @@ class HierarchicalPredictor(nn.Module):
         packed_output, hidden = lstm(packed_input, hidden)
         output, unpacked_len = nn.utils.rnn.pad_packed_sequence(packed_output, batch_first=True)
 
-        # attention_layer = None  # testing
+        attention_layer = None  # testing
         if attention_layer is None:
             seq_len = torch.LongTensor(unpacked_len).view(-1, 1, 1).expand(output.size(0), 1, output.size(2))
             seq_len = Variable(seq_len - 1).cuda()
@@ -117,20 +138,68 @@ class HierarchicalPredictor(nn.Module):
 
         return output[reverse_idx], (hidden[0][:, reverse_idx, :], hidden[1][:, reverse_idx, :])
 
-    def forward(self, a, a_len, a_emoji, elmo_a=None, elmo_b=None, elmo_c=None):
+    def forward(self, a, a_len, b, b_len, c, c_len, a_emoji, b_emoji, c_emoji, elmo_a=None, elmo_b=None, elmo_c=None):
         # Sentence LSTM A
         a_out, a_hidden = self.lstm_forward(a, a_len, elmo_a, self.a_lstm,
                                             attention_layer=self.a_self_attention)
+        # a_out = a_out[:, 0, :]
+        if self.add_linear:
+            a_emoji = self.deepmoji_model(a_emoji)
+            a_emoji = self.deepmoji2linear(a_emoji)
+            a_emoji = F.relu(a_emoji)
+            a_emoji = self.drop_out(a_emoji)
+        else:
+            a_emoji = self.deepmoji_model(a_emoji)
+            a_emoji = F.relu(a_emoji)
 
-        a_emoji = self.deepmoji_model(a_emoji)
-        a_emoji = F.relu(a_emoji)
-
+        # a_out = torch.cat((F.relu(a_out), a_emoji), dim=1)
         a_out = torch.cat((a_out, a_emoji), dim=1)
+        # Sentence LSTM B
+        b_out, b_hidden = self.lstm_forward(b, b_len, elmo_b, self.a_lstm,
+                                            attention_layer=self.b_self_attention)
+        # b_out = b_out[:, 0, :]
+        if self.add_linear:
+            b_emoji = self.deepmoji_model(b_emoji)
+            b_emoji = self.deepmoji2linear(b_emoji)
+            b_emoji = F.relu(b_emoji)
+            b_emoji = self.drop_out(b_emoji)
+        else:
+            b_emoji = self.deepmoji_model(b_emoji)
+            b_emoji = F.relu(b_emoji)
+
+        # b_out = torch.cat((F.relu(b_out), b_emoji), dim=1)
+        b_out = torch.cat((b_out, b_emoji), dim=1)
+        # Sentence LSTM A
+        c_out, c_hidden = self.lstm_forward(c, c_len, elmo_c, self.a_lstm,  # a_hidden,
+                                            attention_layer=self.a_self_attention)
+        # c_out = c_out[:, 0, :]
+        if self.add_linear:
+            c_emoji = self.deepmoji_model(c_emoji)
+            c_emoji = self.deepmoji2linear(c_emoji)
+            c_emoji = F.relu(c_emoji)
+            c_emoji = self.drop_out(c_emoji)
+        else:
+            c_emoji = self.deepmoji_model(c_emoji)
+            c_emoji = F.relu(c_emoji)
+
+        # c_out = torch.cat((F.relu(c_out), c_emoji), dim=1)
+        c_out = torch.cat((c_out, c_emoji), dim=1)
+        # Context LSTM
+        context_in = torch.cat((a_out.unsqueeze(1), b_out.unsqueeze(1), c_out.unsqueeze(1)), dim=1)
+        ctx_out, _ = self.context_lstm(context_in)
+        if isinstance(self.ctx_self_attention, AttentionOneParaPerChan):
+            ctx_out, _ = self.ctx_self_attention(ctx_out, torch.LongTensor([3 for _ in range(a.size(0))]))
+        else:
+            ctx_out, _ = self.ctx_self_attention(ctx_out)
+            ctx_out = ctx_out[:, 0, :]
+
+        # ctx_out = self.ctx_layer_norm(ctx_out)
+        # ctx_out = self.ctx_pooler(ctx_out)
 
         # multi-task learning
-        out1 = self.out2label(a_out)
-        out2 = self.out2binary(a_out)
-        out3 = F.sigmoid(self.out2emo(a_out))
+        out1 = self.out2label(ctx_out)
+        out2 = self.out2binary(ctx_out)
+        out3 = F.sigmoid(self.out2emo(ctx_out))
         return out1, out2, out3
 
     def load_embedding(self, emb):

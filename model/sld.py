@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch.autograd import Variable
-from models.self_attention import SelfAttentive, AttentionOneParaPerChan
-from models.torch_moji import TorchMoji
+from model.self_attention import SelfAttentive, AttentionOneParaPerChan
+from model.torch_moji import TorchMoji
 
 import pickle as pkl
 import os
@@ -25,11 +25,18 @@ class HierarchicalPredictor(nn.Module):
 
         self.sent_lstm_directions = 2 if self.bidirectional else 1
         self.cent_lstm_att_fn = AttentionOneParaPerChan
+        self.ctx_lstm__att_fn = AttentionOneParaPerChan
+
+        self.deepmoji_model = TorchMoji(nb_classes=None,
+                                        nb_tokens=50000,
+                                        embed_dropout_rate=0.2,
+                                        final_dropout_rate=0.2)
+        self.deepmoji_dim = 2304
+
+        self.elmo_dim = 1024
 
         self.num_layers = 2
         self.use_elmo = USE_ELMO
-        self.elmo_dim = 1024
-
         if not self.use_elmo:
             self.elmo_dim = 0
 
@@ -43,9 +50,9 @@ class HierarchicalPredictor(nn.Module):
         self.embeddings = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
 
         self.drop_out = nn.Dropout(0.2)
-        self.out2label = nn.Linear(self.sent_lstm_directions*hidden_dim, NUM_EMO)
-        self.out2binary = nn.Linear(self.sent_lstm_directions*hidden_dim, 2)
-        self.out2emo = nn.Linear(self.sent_lstm_directions*hidden_dim, NUM_EMO-1)
+        self.out2label = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, NUM_EMO)
+        self.out2binary = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, 2)
+        self.out2emo = nn.Linear(self.sent_lstm_directions*hidden_dim + self.deepmoji_dim, NUM_EMO-1)
 
     def init_hidden(self, x):
         batch_size = x.size(0)
@@ -114,6 +121,11 @@ class HierarchicalPredictor(nn.Module):
         # Sentence LSTM A
         a_out, a_hidden = self.lstm_forward(a, a_len, elmo_a, self.a_lstm,
                                             attention_layer=self.a_self_attention)
+
+        a_emoji = self.deepmoji_model(a_emoji)
+        a_emoji = F.relu(a_emoji)
+
+        a_out = torch.cat((a_out, a_emoji), dim=1)
 
         # multi-task learning
         out1 = self.out2label(a_out)

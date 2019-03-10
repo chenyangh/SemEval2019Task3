@@ -8,7 +8,7 @@ from utils.early_stopping import EarlyStopping
 import numpy as np
 import copy
 from tqdm import tqdm
-from tasks.Task3.hred_predictor_soft_deepmoji_elmo_mtl import HierarchicalPredictor, NUM_EMO
+from model.hred_predictor_soft_deepmoji_elmo_mtl import HierarchicalPredictor, NUM_EMO
 from sklearn.metrics import classification_report
 from tasks.Task3.data.evaluate import load_dev_labels
 import pickle as pkl
@@ -94,8 +94,8 @@ random.seed(RANDOM_SEED)
 #                  'input/embeddings/glove.840B.300d/glove.840B.300d.txt'
 GLOVE_EMB_PATH = '/remote/eureka1/chuang8/glove.840B.300d.txt'
 
-options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
-weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
+options_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
+weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/model/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
 
 # options_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json'
 # weight_file = 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5'
