@@ -13,7 +13,7 @@ An overview of the proposed *HRLCE* Model:
 
 HRLCE is a single model that can achieve a score of 0.7666 on the final test set while only using the training dataset. 
 
-We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 on the leaderboard of SemEval 2019 Task3.
+We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 which ranked at 5th on the leaderboard of SemEval 2019 Task3.
  
 ## Instructions
 PyTorch1.0 with Python 3.6 serve as the backbones of this project.
