@@ -69,7 +69,7 @@ def get_metrics(ground, predictions):
         macroRecall += recall
         f1 = (2 * recall * precision) / (precision + recall) if (precision + recall) > 0 else 0
         print("Class %s : Precision : %.3f, Recall : %.3f, F1 : %.3f" % (EMOS[c], precision, recall, f1))
-    print('Harmonic Mean (CodaLab is using this, not Micro F1 of the three emotions :))) They are different! ',
+    print('Harmonic Mean: ',
           s.harmonic_mean(f1_list))
 
     macroPrecision /= 3

@@ -18,8 +18,16 @@ HRLCE is a single model that can achieve a score of 0.7666 on the final test set
 We also finetune the *BERT-LARGE* model on this task. The results of BERT and HRLCE are combined to get the 0.7709 on the leaderboard of SemEval 2019 Task3.
  
 ## Instructions
+PyTorch1.0 with Python 3.6 is the backbone of this project.
 
+The code is using one GPU by default, you have to modify the code to make it running on CPU or multiple GPUs.
 
+The code might include more features than what has been described in the paper. For example, we experienced with multi-task learning and focal loss, but we found no significant difference.
+
+To run the code, you have to specify the path to a 
+
+Another note, to get your submissions measured the same way as the CodaLab, you need to look at the harmonic mean of the three macro F1 scores of the three emotion categories. 
+It is slightly different than using the micro F scores of the three emotion categories directly. 
 
 ## Performance
 The results are shown in the following table:
@@ -43,4 +51,4 @@ This code is relying on the work of the following projects:
 
 * [ekphrasis](https://github.com/cbaziotis/ekphrasis)
 
-Many thanks to my supervisor [Osmar R. Zaïane](http://webdocs.cs.ualberta.ca/~zaiane/) for supporting me working on this competition. 
+Many thanks to my supervisor [Osmar R. Zaïane](http://webdocs.cs.ualberta.ca/~zaiane/) for supporting me working on this shared task. 
