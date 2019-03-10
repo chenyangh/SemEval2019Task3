@@ -21,13 +21,14 @@ The results are shown in the following table:
 *CODE CLEANING IS STILL IN PROGRESS*
 
 # Acknowledgement
-This code is relying on the work of the following projects, 
-please do not forget to get them credits if you find the work of ours is helpful:
+This code is relying on the work of the following projects:
 
-[AllenNlp](https://github.com/allenai/allennlp)
+* [AllenNlp](https://github.com/allenai/allennlp)
 
-[torchMoji](https://github.com/huggingface/torchMoji)
+* [torchMoji](https://github.com/huggingface/torchMoji)
 
-[pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT)
+* [pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT)
 
-[ekphrasis](https://github.com/cbaziotis/ekphrasis)
+* [ekphrasis](https://github.com/cbaziotis/ekphrasis)
+
+Much thanks to my supervisor [Osmar R. Zaïane](http://webdocs.cs.ualberta.ca/~zaiane/) for supporting me working on this competition. 
