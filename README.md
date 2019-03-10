@@ -8,7 +8,11 @@ An overview of the proposed *HRLCE* Model:
 
 ![HRLCE](img/hred.jpg )
 
+## Instructions
 
+
+
+## Performance
 The results are shown in the following table:
 
 |        |    F1    |   Happy  |   Angry  |    Sad   | Harm. Mean  |
@@ -20,7 +24,7 @@ The results are shown in the following table:
 
 *CODE CLEANING IS STILL IN PROGRESS*
 
-# Acknowledgement
+## Acknowledgement
 This code is relying on the work of the following projects:
 
 * [AllenNlp](https://github.com/allenai/allennlp)
