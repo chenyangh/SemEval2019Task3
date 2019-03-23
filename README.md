@@ -22,7 +22,7 @@ PyTorch1.0 with Python 3.6 serve as the backbones of this project.
 
 The code is using one GPU by default, you have to modify the code to make it running on CPU or multiple GPUs.
 
-The code might include more features than what has been described in the paper. For example, we experienced with multi-task learning and focal loss, but we found no significant difference.
+The code includes more features than what has been described in the paper. For example, we experimented with multi-task learning and focal loss, but we found no significant difference.
 
 To run the code, you have to specify the path to the *glove.840B.300d.txt* model file in *-glovepath* argument option. Other options are configured with some default value. 
 In our experience, the *learning rate* and *decay* would have more impact than others.
