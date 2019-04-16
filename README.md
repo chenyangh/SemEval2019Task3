@@ -30,9 +30,9 @@ In our experience, the *learning rate* and *decay* would have more impact than o
 You have to download the DeepMoji pretrain model if you haven't used it before. 
 I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji). 
 
-"""python
+'''python
 python scripts/download_weights.py
-"""
+'''
 I can not include it in my repo because it exceeds the size limit of GitHub.
 
 
