@@ -27,6 +27,15 @@ The code includes more features than what has been described in the paper. For e
 To run the code, you have to specify the path to the *glove.840B.300d.txt* model file in *-glovepath* argument option. Other options are configured with some default value. 
 In our experience, the *learning rate* and *decay* would have more impact than others.
 
+You have to download the DeepMoji pretrain model if you haven't used it before. 
+I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji). 
+
+"""python
+python scripts/download_weights.py
+"""
+I can not include it in my repo because it exceeds the size limit of GitHub.
+
+
 ## Performance
 The results are shown in the following table:
 
