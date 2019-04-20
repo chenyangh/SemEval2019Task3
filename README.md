@@ -72,6 +72,9 @@ HRLCE it self was able to get into the top 10 while only using the *train* set.
 
 **Last but not least:** The *importance weight of samples* is VERY important. We did not emphasis on our paper but you can try the -w=8 option (no reweight) in our code. Please refer to our paper to see how we reweight the trianing samples. The following table is a comparison of using and without using the *importance weight*.
 
+![compare](img/compare.jpg)
+
+
 ## Acknowledgement
 This code is relying on the work of the following projects:
 
