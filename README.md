@@ -70,10 +70,7 @@ It is slightly different than using the micro F scores of the three emotion cate
 
 HRLCE it self was able to get into the top 10 while only using the *train* set. 
 
-**Last but not least:** The *importance weight of samples* is a VERY important factor, for there is an inconsistency between the training data (*train* set) and the testing data (*dev* and *test* sets). We did not emphasis it on our paper (we did not have space left). Please refer to our paper to see how we reweight the trianing samples. The following table is a comparison of using and without using the *importance weight*.
-
-![compare](img/compare.jpg)
-
+**Last but not least:** The *importance weight of samples* is a VERY important factor, for there is an inconsistency between the training data (*train* set) and the testing data (*dev* and *test* sets). We did not emphasis it on our paper (we did not have space left). Please refer to our paper to see how we reweight the trianing samples.
 
 ## Acknowledgement
 This code is relying on the work of the following projects:
