@@ -40,8 +40,8 @@ In our experience, the *learning rate* and *decay* would have more impact than o
 You have to download the DeepMoji pretrain model if you haven't used it before. 
 I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji).
 
-To avoid the conficts of some package, I suggest using the fork from me directly (https://github.com/chenyangh/torchMoji.git)
-Flowwing the instructions for installation and download the model by the following script (under the direcory of their repo):
+To avoid the conficts of some package, I suggest using the fork from me directly (https://github.com/chenyangh/torchMoji.git).
+Following the instructions for installation and download the model by the following script (under the direcory of their repo):
 
 ```
 git clone https://github.com/chenyangh/torchMoji.git
@@ -68,6 +68,7 @@ Compared to HRLCE, we notice that BERT performs better on *Angry* but worse on *
 Another note, in order to get your submissions measured the same way as that from CodaLab, you will need to look at the harmonic mean of the three macro F1 scores of the three emotion categories. 
 It is slightly different than using the micro F scores of the three emotion categories directly. 
 
+HRLCE it self was able to get into the top 10 while only using the *train* set. The *importance weight of samples* is also very important. For more details, please refer to our paper to see how we reweight the trianing samples. 
 
 ## Acknowledgement
 This code is relying on the work of the following projects:
