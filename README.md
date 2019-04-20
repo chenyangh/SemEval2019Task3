@@ -38,9 +38,15 @@ To run the code, you have to specify the path to the *glove.840B.300d.txt* model
 In our experience, the *learning rate* and *decay* would have more impact than others.
 
 You have to download the DeepMoji pretrain model if you haven't used it before. 
-I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji). Flowwing the instructions for installation and download the model by the following script (under the direcory of their repo):
+I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji).
 
-```python
+To avoid the conficts of some package, I suggest using the fork from me directly (https://github.com/chenyangh/torchMoji.git)
+Flowwing the instructions for installation and download the model by the following script (under the direcory of their repo):
+
+```
+git clone https://github.com/chenyangh/torchMoji.git
+cd torchMoji
+pip install -e .
 python scripts/download_weights.py
 ```
 I can not include it in my repo because it exceeds the size limit of GitHub.
