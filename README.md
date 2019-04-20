@@ -3,6 +3,7 @@
 This repo contains the code for our paper,
  
  **ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT**
+ 
  The paper will appear on the *The 13th International Workshop on Semantic Evaluation collocated with NAACL, Minneapolis, USA 2-7 June, 2019.* For now it is avaialbe on [arxiv](https://arxiv.org/abs/1904.00132):
 
 ```
