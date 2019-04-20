@@ -70,7 +70,7 @@ It is slightly different than using the micro F scores of the three emotion cate
 
 HRLCE it self was able to get into the top 10 while only using the *train* set. 
 
-**Last but not least:** The *importance weight of samples* is VERY important. We did not emphasis on our paper but you can try the -w=8 option (no reweight) in our code. Please refer to our paper to see how we reweight the trianing samples. The following table is a comparison of using and without using the *importance weight*.
+**Last but not least:** The *importance weight of samples* is VERY important. We did not emphasis it on our paper (we did not have space left). Please refer to our paper to see how we reweight the trianing samples. The following table is a comparison of using and without using the *importance weight*.
 
 ![compare](img/compare.jpg)
 
