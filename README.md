@@ -18,7 +18,7 @@ This repo contains the code for our paper,
 
 An overview of the proposed *HRLCE* Model:
 
-![HRLCE](img/hred.jpg )
+![HRLCE](img/hred.jpg)
 
 
 HRLCE is a single model that can achieve a score of 0.7666 on the final test set while only using the training dataset. 
@@ -68,7 +68,9 @@ Compared to HRLCE, we notice that BERT performs better on *Angry* but worse on *
 Another note, in order to get your submissions measured the same way as that from CodaLab, you will need to look at the harmonic mean of the three macro F1 scores of the three emotion categories. 
 It is slightly different than using the micro F scores of the three emotion categories directly. 
 
-HRLCE it self was able to get into the top 10 while only using the *train* set. The *importance weight of samples* is also very important. For more details, please refer to our paper to see how we reweight the trianing samples. 
+HRLCE it self was able to get into the top 10 while only using the *train* set. 
+
+**Last but not least:** The *importance weight of samples* is VERY important. We did not emphasis on our paper but you can try the -w=8 option (no reweight) in our code. Please refer to our paper to see how we reweight the trianing samples. The following table is a comparison of using and without using the *importance weight*.
 
 ## Acknowledgement
 This code is relying on the work of the following projects:
