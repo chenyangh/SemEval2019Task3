@@ -9,7 +9,7 @@ This repo contains the code for our paper,
 ```
 @article{huang2019ana,
   title={ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT},
-  author={Huang, Chenyang and Trabelsi, Amine and Za{\"\i}ane, Osmar R},
+  author={Huang, Chenyang and Trabelsi, Amine and ZaZa\"{i}ane, Osmar R},
   journal={arXiv preprint arXiv:1904.00132},
   year={2019}
 }
