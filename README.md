@@ -14,6 +14,8 @@ This repo contains the code for our paper,
   year={2019}
 }
 ```
+### What is ANA?
+
 [Automated Nanny Agent (ANA)](https://www.amii.ca/ana-automated-nanny-agent/) is a project founded by [Alberta Machine Intelligence Institute (AMII)](https://www.amii.ca/). For more details, please visit the webpages.
 
 An overview of the proposed *HRLCE* Model:
