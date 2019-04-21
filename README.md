@@ -1,10 +1,10 @@
 # ANA at SemEval-2019 Task 3 
 
-This repo contains the code for our paper,
+This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
  
  **ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT**
  
- The [paper](https://arxiv.org/abs/1904.00132) will appear on the *The 13th International Workshop on Semantic Evaluation collocated with NAACL, Minneapolis, USA 2-7 June, 2019.* For now it is avaialbe on arxiv:
+ The paper will appear on the *The 13th International Workshop on Semantic Evaluation collocated with NAACL, Minneapolis, USA 2-7 June, 2019.* For now it is avaialbe on arxiv:
 
 ```
 @article{huang2019ana,
@@ -18,10 +18,9 @@ This repo contains the code for our paper,
 
 [Automated Nanny Agent (ANA)](https://www.amii.ca/ana-automated-nanny-agent/) is a project founded by [Alberta Machine Intelligence Institute (AMII)](https://www.amii.ca/). For more details, please visit the webpages.
 
-An overview of the proposed *HRLCE* Model:
+### An graphical overview of the proposed *HRLCE* Model:
 
 ![HRLCE](img/hred.jpg)
-
 
 HRLCE is a single model that can achieve a score of 0.7666 on the final test set while only using the training dataset. 
 
