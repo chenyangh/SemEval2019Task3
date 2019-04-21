@@ -81,7 +81,7 @@ This code is relying on the work of the following projects:
 
 * [torchMoji](https://github.com/huggingface/torchMoji)
 
-* [pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT)
+* [pytorch-pretrained-BERT](https://github.com/huggingface/pytorch-pretrained-BERT) <= 0.5
 
 * [ekphrasis](https://github.com/cbaziotis/ekphrasis)
 
