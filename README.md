@@ -65,8 +65,9 @@ The results are shown in the following table:
 
 Compared to HRLCE, we notice that BERT performs better on *Angry* but worse on *Happy*, therefore it makes sense to combine the results of these two. 
 
+## NOTES
 Another note, in order to get your submissions measured the same way as that from CodaLab, you will need to look at the harmonic mean of the three macro F1 scores of the three emotion categories. 
-It is slightly different than using the micro F scores of the three emotion categories directly. 
+It is slightly different than using the micro F scores of the three emotion categories directly (which is declared to be the measurement officially). 
 
 HRLCE itself was able to get into the top 10 while only using the *train* set. 
 
