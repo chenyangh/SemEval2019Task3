@@ -1,4 +1,6 @@
 # ANA at SemEval-2019 Task 3 
+<img src="img/pytorch-logo-dark.png" width="10%"> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
 
 This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
  
