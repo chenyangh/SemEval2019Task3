@@ -41,7 +41,7 @@ In our experience, the *learning rate* and *decay* would have more impact than o
 You have to download the DeepMoji pretrain model if you haven't used it before. 
 I am using the implementation by Hugginface (https://github.com/huggingface/torchMoji).
 
-To avoid the conficts of some package, I suggest using the fork from me directly (https://github.com/chenyangh/torchMoji.git).
+To avoid the conficts of some packages, I suggest using the fork from me directly (https://github.com/chenyangh/torchMoji.git).
 Following the instructions for installation and download the model by the following script (under the direcory of their repo):
 
 ```
