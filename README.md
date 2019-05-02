@@ -2,6 +2,8 @@
 [<img src="img/pytorch-logo-dark.png" width="10%">](https://pytorch.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
+**News!** Our paper is selected as the oral presentation for the *SemEval-2019: task 3*. 
+
 This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
  
  **ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT**
