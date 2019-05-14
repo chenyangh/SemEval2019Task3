@@ -20,7 +20,7 @@ This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
 ```
 ### What is ANA?
 
-[Automated Nanny Agent (ANA)](https://www.amii.ca/ana-automated-nanny-agent/) is a project founded by [Alberta Machine Intelligence Institute (AMII)](https://www.amii.ca/). For more details, please visit the webpages.
+[Automated Nursing Agent (ANA)](https://www.amii.ca/ana-automated-nanny-agent/) is a project founded by [Alberta Machine Intelligence Institute (AMII)](https://www.amii.ca/). For more details, please visit the webpages.
 
 ### An graphical overview of the proposed *HRLCE* Model:
 
