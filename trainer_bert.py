@@ -48,13 +48,6 @@ parser.add_argument('-tokentype', default='True', type=str,
                     help="post name")
 opt = parser.parse_args()
 
-if opt.half == 'True':
-    HALF_PRECISION = True
-elif opt.half == 'False':
-    HALF_PRECISION = False
-else:
-    raise ValueError
-
 if opt.size == 'large':
     BERT_MODEL = 'bert-large-uncased'
 elif opt.size == 'base':
@@ -348,9 +341,6 @@ def main():
             model = BERT_classifer.from_pretrained(BERT_MODEL)
             model.add_output_layer(BERT_MODEL, NUM_EMO)
             model = nn.DataParallel(model)
-            if HALF_PRECISION:
-                # model = network_to_half(model)
-                model.half()
             model.cuda()
 
             # BERT optimizer
