@@ -11,7 +11,7 @@ This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
  The paper will appear on the *The 13th International Workshop on Semantic Evaluation collocated with NAACL, Minneapolis, USA 2-7 June, 2019.* For now it is available on arxiv:
 
 ```
-@inproceedings{huang-etal-2019-ana,
+@inproceedings{huang2019ana,
     title = "{ANA} at {S}em{E}val-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical {LSTM}s and {BERT}",
     author = {Huang, Chenyang  and
       Trabelsi, Amine  and
