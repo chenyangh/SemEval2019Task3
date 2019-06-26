@@ -12,7 +12,7 @@ This repo contains the code for our [paper](https://arxiv.org/abs/1904.00132),
 
 ```
 @inproceedings{huang2019ana,
-    title = "{ANA} at {S}em{E}val-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical {LSTM}s and {BERT}",
+    title = "ANA at SemEval-2019 Task 3: Contextual Emotion detection in Conversations through hierarchical LSTMs and BERT",
     author = {Huang, Chenyang  and
       Trabelsi, Amine  and
       Za\"{i}ane, Osmar},
