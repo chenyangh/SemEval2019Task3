@@ -68,6 +68,7 @@ def get_metrics(ground, predictions):
         recall = truePositives[c] / (truePositives[c] + falseNegatives[c])
         macroRecall += recall
         f1 = (2 * recall * precision) / (precision + recall) if (precision + recall) > 0 else 0
+        f1_list.append(f1)
         print("Class %s : Precision : %.3f, Recall : %.3f, F1 : %.3f" % (EMOS[c], precision, recall, f1))
     print('Harmonic Mean: ',
           s.harmonic_mean(f1_list))
